@@ -15,8 +15,7 @@ const useHomeFetch = () => {
   const [state, setState] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
-  console.log(searchTerm)
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const fetchMovies = async (page, searchTerm = '') => {
     try {
@@ -36,12 +35,22 @@ const useHomeFetch = () => {
     setLoading(false);
   };
 
-  // Initial render
+  // Initial and search
   useEffect(() => {
-    fetchMovies(1);
-  }, []);
+    setState(initialState);
+    fetchMovies(1, searchTerm);
+  }, [searchTerm]);
+  // here the [] = on component mount, happens only when the program loads the 1st time
+  // [searchTerm] = triggers each time the user types smth in the search bar, every time the searchTerm state changes
 
-  return { state, loading, error, setSearchTerm };
+  // Load more
+  useEffect(() => {
+    if(!isLoadingMore) return;
+    fetchMovies(state.page+1, searchTerm);
+    setIsLoadingMore(false);
+  }, [isLoadingMore, searchTerm, state.page])
+
+  return { state, loading, error, searchTerm,  setSearchTerm, setIsLoadingMore };
 };
 
 export { useHomeFetch };

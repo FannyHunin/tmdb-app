@@ -9,6 +9,7 @@ import Grid from "./Grid/Grid";
 import Thumb from "./Thumb/Thumb";
 import Spinner from "./Spinner/Spinner";
 import SearchBar from "./SearchBar/SearchBar";
+import Button from "./Button/Button";
 
 //hooks
 import { useHomeFetch } from "../hooks/useHomeFetch";
@@ -18,14 +19,22 @@ import NoImage from "../images/no_image.jpg";
 
 
 const Home = () => {
-  const { state, loading, error, setSearchTerm } = useHomeFetch();
+  const { state, loading, error, searchTerm,  setSearchTerm, setIsLoadingMore } = useHomeFetch();
 
   console.log(state);
+
+  if(error) {
+    return (
+      <div>
+        Something went wrong...
+      </div>
+    )
+  }
 
   return (
   <>
     {
-    state.results[0] ? 
+    !searchTerm && state.results[0] ? 
     <HeroImage 
     image={`${IMAGE_BASE_URL}${BACKDROP_SIZE}${state.results[0].backdrop_path}`}
     title={state.results[0].original_title}
@@ -35,7 +44,7 @@ const Home = () => {
 
     <SearchBar setSearchTerm={setSearchTerm} />
 
-    <Grid header='Popular Movies'>
+    <Grid header={searchTerm ? 'Search result(s)' : 'Popular Movies'}>
       {
         state.results.map((movie, i) => (
           <Thumb 
@@ -50,7 +59,10 @@ const Home = () => {
         ))
       }
     </Grid>
-    <Spinner/>
+    {loading && <Spinner/>}
+    {state.page < state.total_pages && !loading && (
+        <Button text="Load more" callback={() => setIsLoadingMore(true)} />
+      )}
   </>
   );
 };
