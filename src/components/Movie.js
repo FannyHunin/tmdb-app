@@ -8,6 +8,7 @@ import { IMAGE_BASE_URL, POSTER_SIZE } from "../config";
 import Grid from "./Grid/Grid";
 import Spinner from "./Spinner/Spinner";
 import BreadCrumbs from "./BreadCrumbs/BreadCrumbs";
+import MovieInfo from "./MovieInfo/MovieInfo";
 
 //hooks
 import { useMovieFetch } from "../hooks/useMovieFetch";
@@ -24,6 +25,8 @@ export default function Movie() {
   return (
     <>
       <BreadCrumbs movieTitle={movie.original_title} />
+
+      <MovieInfo movie={movie} />
     </>
   );
 }
